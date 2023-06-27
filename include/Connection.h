@@ -13,8 +13,8 @@ using namespace sf;
 using namespace std;
 
 // Para control de versiones y obligar a actualizar a versiones incompatibles con el online.
-# define NINJA_VERSION 5
-# define ONLINE_VERSION 10
+# define NINJA_VERSION 6
+# define ONLINE_VERSION 11
 
 enum MessageKind{
     NOP = 0,
