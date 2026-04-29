@@ -17,7 +17,7 @@ public:
     static constexpr double MasInfinito = 1e15;
     static constexpr double MenosInfinito = -1e15;
 
-    enum class ModoJuego { ALEATORIO, INTELIGENTE, STATUS };
+    enum class ModoJuego { ALEATORIO, MINIMAX, INTELIGENTE, STATUS };
 
     /**
      * Constructor 

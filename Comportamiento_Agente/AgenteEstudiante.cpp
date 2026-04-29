@@ -32,6 +32,11 @@ std::pair<int, int> AgenteEstudiante::think(const Tablero& tablero) {
         return mejor;
         break;    
 
+    case ModoJuego::MINIMAX:
+        minimax(tablero, 0, profundidadMax, mejor);
+        return mejor;
+        break; 
+
     case ModoJuego::INTELIGENTE:
         return JuegaInteligente(tablero);   
         break;
@@ -39,6 +44,7 @@ std::pair<int, int> AgenteEstudiante::think(const Tablero& tablero) {
         
     return {-1, -1};
 }
+
 
 
 /**
