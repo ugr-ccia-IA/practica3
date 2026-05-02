@@ -65,6 +65,7 @@ void GUI::display() {
 
     if (controlador) {
         const Tablero& t = controlador->getTablero();
+        bool modoNinja = (filasTablero == 9 && colsTablero == 9 && t.getNParaGanar() == 5);
         for (int f = 0; f < filasTablero; ++f) {
             for (int c = 0; c < colsTablero; ++c) {
                 int jugador = t.getCelda(f, c);
@@ -154,13 +155,15 @@ void GUI::display() {
         renderText(colsTablero + 0.25f, y_total2, GLUT_BITMAP_HELVETICA_10, buffer, 1.0f, 0.4f, 1.0f);
 
         // --- Marcador de Puntos (Tiebreakers) ---
-        float y_puntos_base = y_total2 + 0.5f;
-        renderText(colsTablero + 0.25f, y_puntos_base, GLUT_BITMAP_HELVETICA_12, "PUNTUACION (5|4):", 0.5f, 0.7f, 1.0f);
-        
-        std::string pts1 = "J1: " + std::to_string(t.contarCombinaciones(5, 1)) + " | " + std::to_string(t.contarCombinaciones(4, 1));
-        std::string pts2 = "J2: " + std::to_string(t.contarCombinaciones(5, 2)) + " | " + std::to_string(t.contarCombinaciones(4, 2));
-        renderText(colsTablero + 0.25f, y_puntos_base + 0.3f, GLUT_BITMAP_HELVETICA_12, pts1, 0.0f, 1.0f, 1.0f);
-        renderText(colsTablero + 0.25f, y_puntos_base + 0.6f, GLUT_BITMAP_HELVETICA_12, pts2, 1.0f, 0.4f, 1.0f);
+        if (modoNinja) {
+            float y_puntos_base = y_total2 + 0.5f;
+            renderText(colsTablero + 0.25f, y_puntos_base, GLUT_BITMAP_HELVETICA_12, "PUNTUACION (5|4):", 0.5f, 0.7f, 1.0f);
+            
+            std::string pts1 = "J1: " + std::to_string(t.contarCombinaciones(5, 1)) + " | " + std::to_string(t.contarCombinaciones(4, 1));
+            std::string pts2 = "J2: " + std::to_string(t.contarCombinaciones(5, 2)) + " | " + std::to_string(t.contarCombinaciones(4, 2));
+            renderText(colsTablero + 0.25f, y_puntos_base + 0.3f, GLUT_BITMAP_HELVETICA_12, pts1, 0.0f, 1.0f, 1.0f);
+            renderText(colsTablero + 0.25f, y_puntos_base + 0.6f, GLUT_BITMAP_HELVETICA_12, pts2, 1.0f, 0.4f, 1.0f);
+        }
 
         if (controlador->getGanador() != 0) {
             std::string winStr = (controlador->getGanador() == -1) ? "EMPATE" : "J" + std::to_string(controlador->getGanador()) + " GANA";
@@ -277,13 +280,14 @@ void GUI::dibujarFondoElegante() {
 
 void GUI::dibujarTablero() {
     const Tablero& t = controlador->getTablero();
+    bool modoNinja = (filasTablero == 9 && colsTablero == 9 && t.getNParaGanar() == 5);
     int residuoValido = t.getFaseActual() % 3;
 
     for (int f = 0; f < filasTablero; ++f) {
         for (int c = 0; c < colsTablero; ++c) {
             Tablero::TipoCelda tipo = t.getTipoCelda(f, c);
-            bool esResiduoCorrecto = ((f + c) % 3 == residuoValido);
-            bool esAdyacenteValida = t.esVacio() || t.tieneAdyacente(f, c);
+            bool esResiduoCorrecto = !modoNinja || ((f + c) % 3 == residuoValido);
+            bool esAdyacenteValida = !modoNinja || t.esVacio() || t.tieneAdyacente(f, c);
             bool esJugable = esResiduoCorrecto && esAdyacenteValida && t.getCelda(f, c) == 0;
             
             glBegin(GL_QUADS);

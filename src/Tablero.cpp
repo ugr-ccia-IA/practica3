@@ -56,8 +56,22 @@ Tablero Tablero::cargarDesdeFichero(const std::string& ruta) {
  * @param nParaGanar Número de piezas en línea para ganar.
  */
 Tablero::Tablero(int filas, int cols, int nParaGanar) 
-    : filas(filas), columnas(cols), nParaGanar(nParaGanar), turnoActual(4), jugadorTurno(1), movimientosRestantes(1), faseActual(2) {
-    // Inicializar la rejilla con ceros (vacío)
+    : filas(filas), columnas(cols), nParaGanar(nParaGanar) {
+    
+    bool modoNinja = (filas == 9 && columnas == 9 && nParaGanar == 5);
+    
+    // Inicialización de estado según el modo
+    if (modoNinja) {
+        turnoActual = 4;
+        faseActual = 2;
+        movimientosRestantes = 1;
+    } else {
+        turnoActual = 0;
+        faseActual = 0;
+        movimientosRestantes = 1;
+    }
+
+    jugadorTurno = 1;
     rejilla.assign(filas, std::vector<int>(cols, 0));
     especialidad.assign(filas, std::vector<TipoCelda>(cols, TipoCelda::NORMAL));
 
@@ -145,10 +159,11 @@ bool Tablero::ponerPieza(int f, int c, int jugador) {
         movimientosRestantes += 1;
     }
 
-    // Cambio de turno si se agotan movimientos
-    if (movimientosRestantes <= 0) {
+    // Cambio de turno si se agotan movimientos o hay ganador
+    if (movimientosRestantes <= 0 || comprobarGanador() != 0) {
+        bool modoNinja = (filas == 9 && columnas == 9 && nParaGanar == 5);
         jugadorTurno = (jugadorTurno == 1) ? 2 : 1;
-        movimientosRestantes = 2; // Turnos estándar de 2 piezas
+        movimientosRestantes = modoNinja ? 2 : 1; 
         faseActual++; // Avanzamos la fase al cambiar de jugador
     }
 
@@ -275,6 +290,10 @@ int Tablero::contarCombinaciones(int longitud, int jugador) const {
  * @return 1 o 2 para el ganador, -1 si el empate persiste.
  */
 int Tablero::getGanadorDesempate() const {
+    // El sistema de desempate por puntos solo se aplica en Modo Competición 9x9 n=5
+    bool modoNinja = (filas == 9 && columnas == 9 && nParaGanar == 5);
+    if (!modoNinja) return -1;
+
     int p1_4 = contarCombinaciones(4, 1);
     int p2_4 = contarCombinaciones(4, 2);
 
