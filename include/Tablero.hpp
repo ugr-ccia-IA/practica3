@@ -30,6 +30,8 @@ public:
      */
     bool ponerPieza(int f, int c, int jugador);
     std::vector<Tablero> getSucesores() const; // Devuelve los posibles tableros hijos
+    // Devuelve los posibles tableros hijos con el último movimiento realizado
+    std::vector<std::pair<Tablero, std::pair<int,int>>> getSucesoresConMovimientos() const; 
     bool tieneMovimientosValidos() const; // Comprueba si el jugador actual puede mover
     void pasarTurno() { turnoActual++; }  // Incrementa el turno sin poner pieza
 

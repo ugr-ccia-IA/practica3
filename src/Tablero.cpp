@@ -209,6 +209,45 @@ std::vector<Tablero> Tablero::getSucesores() const {
 }
 
 /**
+ * @brief Genera todos los estados sucesores válidos desde el tablero actual junto al movimiento realizado para alcanzarlo.
+ * @return Un vector de de pares <Tablero, movimiento (par de enteros)> representando los estados hijos.
+ */
+std::vector<std::pair<Tablero, std::pair<int,int>>> Tablero::getSucesoresConMovimientos() const {
+    std::vector<std::pair<Tablero, std::pair<int,int>>>  sucesores;
+    
+    // Si ya hay un ganador, no hay sucesores
+    if (comprobarGanador() != 0) return sucesores;
+
+    bool modoNinja = (filas == 9 && columnas == 9 && nParaGanar == 5);
+    int residuoValido = modoNinja ? (faseActual % 3) : -1;
+    bool vacio = esVacio();
+
+    for (int f = 0; f < filas; ++f) {
+        for (int c = 0; c < columnas; ++c) {
+            if (rejilla[f][c] == 0) {
+                bool movimientoValido = false;
+                if (modoNinja) {
+                    if ((f + c) % 3 == residuoValido && (vacio || tieneAdyacente(f, c))) {
+                        movimientoValido = true;
+                    }
+                } else {
+                    movimientoValido = true;
+                }
+
+                if (movimientoValido) {
+                    Tablero hijo = *this;
+                    if (hijo.ponerPieza(f, c, jugadorTurno)) {
+                        sucesores.push_back({hijo, {f, c}});
+                    }
+                }
+            }
+        }
+    }
+    return sucesores;
+}
+
+
+/**
  * @brief Escanea el tablero para encontrar si algún jugador ha completado una línea ganadora.
  * @return ID del jugador ganador, 0 si no hay ganador, o -1 si hay empate por tablero lleno.
  */
