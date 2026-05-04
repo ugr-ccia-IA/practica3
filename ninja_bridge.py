@@ -28,7 +28,7 @@ def connect_to_ninja_server():
             "turno_actual": int(sys.argv[8]),
             "tablero": [int(x) for x in sys.argv[9:]]
         }
-        r = requests.post(SERVER_URL, json=payload, timeout=5.0)
+        r = requests.post(SERVER_URL, json=payload, timeout=60.0)
         res = r.json()
         if 'fila' in res and 'columna' in res:
             print(f"{res['fila']} {res['columna']}")
